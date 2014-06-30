@@ -12,8 +12,9 @@ instance.Attach()
 
 def writeToLog(skype, instance=instance):
 	instance.Client.OpenUserInfoDialog(skype)
-	instance.Minimize()
-	instance.Focus()
+	#So we can resolve more than once
+	instance.Client.Minimize()
+	instance.Client.Focus()
 	return True
 
 class resolve:
