@@ -1,6 +1,7 @@
 import json
 import Skype4Py
 import web
+import time
 
 urls = (
     '/api/(.*)', 'resolve'
@@ -11,7 +12,7 @@ instance.Attach()
 
 def writeToLog(skype, instance=instance):
 	instance.Client.OpenUserInfoDialog(skype)
-	instance.Hide()
+	instance.Minimize()
 	instance.Focus()
 	return True
 
