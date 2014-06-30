@@ -10,7 +10,7 @@ instance = Skype4Py.Skype()
 instance.Attach()
 
 def resolveIt(skype, instance=instance):
-	return
+	instance.Client.OpenUserInfoDialog(skype)
 
 class resolve:
     def GET(self, skype):
