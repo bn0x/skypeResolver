@@ -17,7 +17,7 @@ def findIpAddresses(skype):
 	logs = glob.glob('debug-*.log')
 	print logs
 	for log in logs:
-		lol = re.findall(r".*PresenceManager:.*live:doxing_3.*0x.*-d-s[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}:[0-9]{1,}-r", open(log, 'r'))
+		lol = re.findall(r".*PresenceManager:.*%s.*0x.*-d-s[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}:[0-9]{1,}-r"%skype, open(log, 'r').read())
 		return lol
 
 def writeToLog(skype, instance=instance):
