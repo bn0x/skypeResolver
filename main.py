@@ -17,18 +17,23 @@ instance.Attach()
 def findIpAddresses(skype):
 	ipAddresses = []
 	logs = glob.glob('debug-*.log')
+	print(logs)
 	for log in logs:
-		lol = re.findall(r".*PresenceManager: .*%s.*-r.*-l"%skype, open(log, 'r').read())
+		lol = re.findall(r".*PresenceManager:.*%s.*"%skype, open(log, 'r').read())
 		for ip in lol:
-			ip = ip.split("-r")[1].split("-l")[0]
-			if ip not in ipAddresses and "40031" not in ip and "10042" not in ip:
-				ipAddresses.append(ip)
-
+			try:
+				ip = ip.split('-r')[1].split('-l')[0]
+				if ip not in ipAddresses:
+					if ip not in ipAddresses and "10042" not in ip and "40031" not in ip and "33033" not in ip:
+						ipAddresses.append(ip)
+			except:
+				continue
 	return ipAddresses
 
 def writeToLog(skype, instance=instance):
 	instance.Client.OpenUserInfoDialog(skype)
-	#So we can resolve more than once
+	instance.Client.Focus()
+	instance.Client.Minimize()
 	instance.Client.Focus()
 	instance.Client.Minimize()
 	return True
@@ -36,17 +41,28 @@ def writeToLog(skype, instance=instance):
 def emailToSkype(skype):
 	return
 
+def blacklist(skype):
+	blackListedSkypes = ['live:doxing_3']
+	if skype in blackListedSkypes:
+		return True
+	else:
+		return False
+
 class resolve:
 	def GET(self, skype):
 		web.header('Content-Type', 'application/json')
+		if blacklist(skype):
+			return json.dumps({'error': 'blacklist', 'success': False})
 		try:
 			ipDict = {'public': [], 'error': None, 'success': True}
 			writeToLog(skype)
 			time.sleep(2)
 			ips = findIpAddresses(skype)
+			print ips
 			for ip in ips:
 				ipDict['public'].append(ip)
 			if len(ipDict['public']) > 0:
+				print(ipDict)
 				return json.dumps(ipDict)
 			else:
 				return json.dumps({'error': 'not found', 'success': False})
