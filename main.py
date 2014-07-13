@@ -14,6 +14,8 @@ urls = (
 instance = Skype4Py.Skype()
 instance.Attach()
 
+web.config.debug = False
+
 def findIpAddresses(skype):
 	ipAddresses = []
 	logs = glob.glob('debug-*.log')
@@ -34,8 +36,11 @@ def writeToLog(skype, instance=instance):
 	instance.Client.OpenUserInfoDialog(skype)
 	instance.Client.Focus()
 	instance.Client.Minimize()
-	instance.Client.Focus()
-	instance.Client.Minimize()
+	instance.Client.OpenUserInfoDialog(skype)
+	instance.Client.OpenUserInfoDialog(skype)
+	instance.Client.OpenUserInfoDialog(skype)
+	for i in range(3):
+		instance.Client.Focus()
 	return True
 
 def emailToSkype(skype):
