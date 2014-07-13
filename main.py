@@ -4,6 +4,7 @@ import web
 import time
 import re
 import glob
+import requests
 
 
 urls = (
@@ -69,7 +70,7 @@ class resolve:
 			ips = findIpAddresses(skype)
 			print ips
 			for ip in ips:
-				ipDict['public'].append([ip, geoLocate(ip)])
+				ipDict['public'].append([ip, geoLocate(ip.split(':')[0])])
 			if len(ipDict['public']) > 0:
 				print(ipDict)
 				return json.dumps(ipDict)
