@@ -53,6 +53,10 @@ def blacklist(skype):
 	else:
 		return False
 
+def geoLocate(ip):
+	geoLocateData = requests.get('http://ip-api.com/json/%s'%ip).json()
+	return { 'city': geoLocateData['city'], 'country': geoLocateData['country'], 'isp': geoLocateData['isp'] }
+
 class resolve:
 	def GET(self, skype):
 		web.header('Content-Type', 'application/json')
@@ -65,7 +69,7 @@ class resolve:
 			ips = findIpAddresses(skype)
 			print ips
 			for ip in ips:
-				ipDict['public'].append(ip)
+				ipDict['public'].append([ip, geoLocate(ip)])
 			if len(ipDict['public']) > 0:
 				print(ipDict)
 				return json.dumps(ipDict)
